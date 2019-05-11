@@ -174,6 +174,7 @@ public class VibrationAlarmReceiver extends BroadcastReceiver {
             }
 
             mediaPlayerScan.prepare();
+            mediaPlayerScan.start();
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
