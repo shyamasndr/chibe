@@ -40,6 +40,18 @@
         android:summary="@string/vibrate_during_calls_preference_summary"
         android:defaultValue="false" />
 
+      <SwitchPreference
+          android:defaultValue="false"
+          android:key="pref_key_play_chime_sound"
+          android:summary="@string/play_chime_sound_preference_summary"
+          android:title="@string/play_chime_sound_preference_title" />
+
+      <SwitchPreference
+          android:defaultValue="true"
+          android:key="pref_key_vibrate"
+          android:summary="@string/vibrate_preference_summary"
+          android:title="@string/vibrate_preference_title" />
+
   </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/pref_category_vibration">

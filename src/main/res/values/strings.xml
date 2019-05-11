@@ -52,6 +52,12 @@
   <string name="vibrate_during_calls_preference_summary">Lets Chibe vibrate
   while making a call</string>
 
+  <string name="play_chime_sound_preference_title" translatable="false">Play Chime</string>
+  <string name="play_chime_sound_preference_summary" translatable="false">Lets play chime</string>
+
+  <string name="vibrate_preference_title" translatable="false">Vibrate</string>
+  <string name="vibrate_preference_summary" translatable="false">Switch of vibration</string>
+
   <string name="pref_category_vibration">Vibration patterns</string>
   <string name="test_normal_vibration_preference_title">Test base
   vibration pattern</string>

@@ -22,12 +22,18 @@ package com.jmstudios.chibe.timing;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 import android.os.Vibrator;
 import android.app.NotificationManager;
 import android.annotation.TargetApi;
 import android.telephony.TelephonyManager;
+import android.media.MediaPlayer;
 
+import com.jmstudios.chibe.R;
 import com.jmstudios.chibe.state.SettingsModel;
 
 public class VibrationAlarmReceiver extends BroadcastReceiver {
@@ -63,6 +69,10 @@ public class VibrationAlarmReceiver extends BroadcastReceiver {
             vibrate(context, 1, ammHourPattern);
         }
 
+        if (shouldPlayChime(settingsModel, context)) {
+            playChime(context);
+        }
+
         // Schedule new alarm
         VibrationAlarmScheduler.rescheduleAlarm(context);
     }
@@ -71,14 +81,25 @@ public class VibrationAlarmReceiver extends BroadcastReceiver {
                                   Context context) {
         boolean vibrate = true;
 
-        if ( (!settingsModel.shouldVibrateDuringDnd() && isDndEnabled(context)) ||
-             (!settingsModel.shouldVibrateDuringCalls() && isCallActive(context))){
+        if ( !settingsModel.shouldVibrate() || (!settingsModel.shouldVibrateDuringDnd()   && isDndEnabled(context)) ||
+             (!settingsModel.shouldVibrateDuringCalls() && !settingsModel.shouldVibrate() && isCallActive(context))){
             vibrate = false;
         }
 
         return vibrate;
     }
 
+    private boolean shouldPlayChime(SettingsModel settingsModel,
+                                  Context context) {
+        boolean playchime = true;
+
+        if ( !settingsModel.shouldPlayChime() || ((!settingsModel.shouldVibrateDuringDnd() && isDndEnabled(context)) ||
+                (!settingsModel.shouldVibrateDuringCalls()  && isCallActive(context)))){
+            playchime = false;
+        }
+
+        return playchime;
+    }
     @TargetApi(23)
     private boolean isDndEnabled(Context context) {
         boolean dndIsEnabled = false;
@@ -132,6 +153,31 @@ public class VibrationAlarmReceiver extends BroadcastReceiver {
 
         int noRepeat = -1;
         vibrator.vibrate(vibrationPattern, noRepeat);
+    }
+
+    public static void playChime
+            (Context context) {
+
+        MediaPlayer mediaPlayerScan = new MediaPlayer();
+        try {
+            mediaPlayerScan.setDataSource(context,
+                    Uri.parse("android.resource://" + context.getPackageName() + "/raw/casiochime"));
+
+
+            if (Build.VERSION.SDK_INT >= 21) {
+                mediaPlayerScan.setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build());
+            } else {
+                mediaPlayerScan.setAudioStreamType(AudioManager.STREAM_ALARM);
+            }
+
+            mediaPlayerScan.prepare();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private static long[] getVibrationPattern
